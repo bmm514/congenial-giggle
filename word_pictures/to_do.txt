@@ -1,0 +1,4 @@
+To do list:
+	- make more user friendly
+	- setup a CLI for making word strings
+	- Setup conversion from text document (should be fairly simple)
