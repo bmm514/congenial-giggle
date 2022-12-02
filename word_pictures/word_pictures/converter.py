@@ -67,7 +67,8 @@ def make_coordinate_array(square_size_mm, square_side):
     return coord_array
 
 
-def test_image(coord_array, square_hex_colors):
+# output square as picture
+def make_image(coord_array, square_hex_colors, figname):
     width = coord_array[-1][-1][2]
     height = coord_array[-1][-1][3]
     data = numpy.zeros((height, width, 3), dtype = numpy.uint8)
@@ -79,17 +80,13 @@ def test_image(coord_array, square_hex_colors):
             data[a:c, b:d] = ImageColor.getrgb(color)
 
     img = Image.fromarray(data)
-    img.save('fig2.png')
+    img.save(figname)
 
     return data
 
-# output square as picture
-def make_image(square_hex_colors, square_size = 10):
-    square_size_pixel = mm_to_pixel(square_size)
-
-    array = numpy.arange(0, 737280, 1, numpy.uint8)
-    array = numpy.reshape(array, (1024, 720))
-    print(array)
-
-    data = Image.fromarray(array)
-    data.save('test.png')
+def make_picture_from_string(ascii_string, square_size_mm = 10, figname = 'test.png'):
+    hex_string = ascii_to_hex(ascii_string)
+    hex_colors, hex_string_length = make_hex_colors(hex_string)
+    square_hex_colors, square_side = make_color_square(hex_colors, hex_string_length)
+    coord_array = make_coordinate_array(square_size_mm, square_side)
+    data = make_image(coord_array, square_hex_colors, figname)
