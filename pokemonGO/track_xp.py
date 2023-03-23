@@ -2,6 +2,10 @@ from os import path, makedirs
 import json
 
 from collections import OrderedDict
+
+class AlreadyInDict(Exception):
+    '''A key is aleady present in the dictionary'''
+
 class pokemonGOtracker:
     def __init__(self, tracker_file):
         self.tracker_file = tracker_file
@@ -30,20 +34,39 @@ class pokemonGOtracker:
         finally:
             print('Successfully cleared the file')
 
-    def update_xp(self, xp, date):
+    def update_xp(self, xp, date, accept_all = False):
         '''Add the XP on a date specified in the format DD/MM/YY'''
         try:
             tracker_json = OrderedDict(json.load(open(self.tracker_file)))
+            if date in tracker_json.keys():
+                raise AlreadyInDict
             tracker_json.update({date : xp})
         #except JSONDecodeError:
         except json.decoder.JSONDecodeError:
             tracker_json = OrderedDict({date : xp})
+        except AlreadyInDict:
+            current_xp = tracker_json[date]
+            if not accept_all:
+                replace_xp = input(f'Replace the current xp, {current_xp}, with {xp}? y/n?')
+            else:
+                replace_xp = 'y'
+
+            if replace_xp == 'y':
+                tracker_json.update({date : xp})
 
         with open(self.tracker_file, 'w') as jsonout:
             json.dump(tracker_json, jsonout, indent = 2)
         
         return(tracker_json)
 
+def main():
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(description = 'PokemonGo tracker for xp, ...')
+
+    update_parser = parser.add_argument_group('update', description = 'Update xp')
+    update_parser.add_argument('xp', help = 'Xp value to add to the data storage for the date specified')
+    update_parser.add_argument('--date', help = 'Date for the Xp value to be added to')
 
 
 
@@ -57,3 +80,4 @@ if __name__ == '__main__':
     print(pokeGOtracker.update_xp(5924750, '20/03/23'))
     print(pokeGOtracker.update_xp(5976650, '21/03/23'))
     print(pokeGOtracker.update_xp(6118500, '22/03/23'))
+
