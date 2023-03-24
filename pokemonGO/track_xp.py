@@ -61,17 +61,34 @@ class pokemonGOtracker:
             json.dump(tracker_json, jsonout, indent = 2)
         
         return(tracker_json)
+    
+    def delete_record(self, date):
+        '''Delete a record from the database'''
+        pass
+
+def update_main(args):
+    tracker_file = args.tracker_json
+    xp = args.xp
+    date = args.date
+    accept_all = args.force_yes
+
+    pokeGOtracker = pokemonGOtracker(tracker_file) 
+    pokeGOtracker.update_xp(xp, date, accept_all)
+
+
 
 def main():
     from argparse import ArgumentParser
 
     parser = ArgumentParser(description = 'PokemonGo tracker for xp, ...')
+    parser.add_argument('tracker_json', help = 'Path to the tracker JSON file')
     parser.add_argument('--force_yes', help = 'Always answer yes to questions', action = 'store_true')
 
     subparser = parser.add_subparsers(title = 'command', description = 'Choose mode to run in:', dest = 'command', required = True)
     update_parser = subparser.add_parser('update', help = 'Update XP for a date')
     update_parser.add_argument('xp', help = 'Xp value to add to the data storage for the date specified')
     update_parser.add_argument('--date', help = 'Date for the Xp value to be added to. Default to current date')
+    update_parser.set_defaults(func=update_main)
 
     args = parser.parse_args()
 
@@ -81,21 +98,8 @@ def main():
 
     print(xp, date, accept_all)
 
-    tracker_file = 'test/bmm.json'
-
-    pokeGOtracker = pokemonGOtracker(tracker_file) 
-    pokeGOtracker.update_xp(xp, date, accept_all)
+    args.func(args)
 
 
 if __name__ == '__main__':
     main()
-#    tracker_file = 'test/bmm.json'
-#
-#    pokeGOtracker = pokemonGOtracker(tracker_file) 
-#
-#    print(pokeGOtracker.tracker_file)
-#    print(pokeGOtracker.directory)
-#    print(pokeGOtracker.update_xp(5924750, '20/03/23'))
-#    print(pokeGOtracker.update_xp(5976650, '21/03/23'))
-#    print(pokeGOtracker.update_xp(6118500, '22/03/23'))
-
