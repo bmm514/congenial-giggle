@@ -116,7 +116,7 @@ class pokemonGOtracker:
         
         avg_daily_xp = xp_delta / days.days
 
-        return avg_daily_xp, days, xp_delta
+        return avg_daily_xp, (start_day_key, end_day_key) 
     
     def latest_xp(self):
         _, latest_day = int(self._get_isoday(None, -1))
@@ -139,6 +139,16 @@ def delete_main(args):
 
     pokeGOtracker = pokemonGOtracker(tracker_file) 
     pokeGOtracker.delete_record(date)
+
+def avg_xp_main(args):
+    tracker_file = args.tracker_dict
+    start_date = args.start_date
+    end_date = args.end_date
+
+    pokeGOtracker = pokemonGOtracker(tracker_file) 
+    avg_daily_xp, (start_day_key, end_day_key) = pokeGOtracker.calculate_avg_daily(start_date, end_date)
+
+    print(f'Average XP gained between {start_day_key} and {end_day_key}: {avg_daily_xp}')
 
 def handle_date(date):
     '''Convert date from DD/MM/YY to a datetime.date object if not already in the correct format'''
@@ -165,6 +175,13 @@ def main():
     delete_parser = subparser.add_parser('delete', help = 'Delete a date record')
     delete_parser.add_argument('--date', help = 'Date for the Xp value to be deleted.')
     delete_parser.set_defaults(func=delete_main)
+
+    avg_xp_parser = subparser.add_parser('avg_xp', help = 'Calculate the average XP between two dates')
+    avg_xp_parser.add_argument('--start_date', help = 'Date for the start xp value to be used (DD/MM/YYYY). Default earliest',
+            default = None)
+    avg_xp_parser.add_argument('--end_date', help = 'Date for the end xp value to be used (DD/MM/YYY). Default latest',
+            default = None)
+    avg_xp_parser.set_defaults(func=avg_xp_main)
 
     args = parser.parse_args()
 
