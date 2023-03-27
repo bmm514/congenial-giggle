@@ -60,7 +60,7 @@ class pokemonGOtracker:
         except AlreadyInDict:
             current_xp = self.tracker_dict[date]
             if not accept_all:
-                replace_xp = input(f'Replace the current xp, {current_xp}, with {xp}? y/n?')
+                replace_xp = input(f'Replace the current xp, {current_xp}, on {date} with {xp}? y/n?')
             else:
                 replace_xp = 'y'
 
