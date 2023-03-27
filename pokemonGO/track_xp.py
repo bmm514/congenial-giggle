@@ -77,6 +77,51 @@ class pokemonGOtracker:
         del self.tracker_dict[date]
         self._save_json()
 
+    def _get_isoday(self, day, loc):
+        '''Get the day in datetime format and the dict key associated with it.
+        Only day (DD/MM/YYY) or loc are required.'''
+        if day is None:
+            day_key = sorted(self.tracker_dict)[loc]
+        else:
+            day_key = handle_date(day)
+
+        day = datetime.date.fromisoformat(day_key)
+
+        return day, day_key
+
+    def _xp_delta(self, end_day_key, start_day_key):
+        try:
+            xp_delta = int(self.tracker_dict[end_day_key]) - int(self.tracker_dict[start_day_key])
+        except KeyError:
+            try:
+                self.tracker_dict[end_day_key]
+            except KeyError as e:
+                print(f'{e} is not found for the end_day')
+                raise
+            try:
+                self.tracker_dict[start_day_key]
+            except KeyError as e:
+                print(f'{e} is not found for the start_day')
+                raise
+
+        return xp_delta
+
+    def calculate_avg_daily(self, start_day = None, end_day = None):
+        '''Calcualte the avg daily xp between two dates. start_day and end_day default to newest and oldest dates'''
+        start_day, start_day_key = self._get_isoday(start_day, 0)
+        end_day, end_day_key = self._get_isoday(end_day, -1)
+
+        days = end_day - start_day
+        xp_delta = self._xp_delta(end_day_key, start_day_key)
+        
+        avg_daily_xp = xp_delta / days.days
+
+        return avg_daily_xp, days, xp_delta
+    
+    def latest_xp(self):
+        _, latest_day = int(self._get_isoday(None, -1))
+        return self.tracker_dict[latest_day]
+
 def update_main(args):
     '''Function to run update for argparser'''
     tracker_file = args.tracker_dict
