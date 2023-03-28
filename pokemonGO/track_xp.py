@@ -57,6 +57,7 @@ class pokemonGOtracker:
             if date in self.tracker_dict.keys():
                 raise AlreadyInDict
             self.tracker_dict.update({date : xp})
+            print(f'Updated {xp} on {date}')
         except AlreadyInDict:
             current_xp = self.tracker_dict[date]
             if not accept_all:
@@ -66,7 +67,7 @@ class pokemonGOtracker:
 
             if replace_xp == 'y':
                 self.tracker_dict[date] = xp
-                print(f'Updated xp for {date}')
+                print(f'Updated {xp} on {date}')
             else:
                 print('Not updated')
 
