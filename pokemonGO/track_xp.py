@@ -57,7 +57,7 @@ class pokemonGOtracker:
             if date in self.tracker_dict.keys():
                 raise AlreadyInDict
             self.tracker_dict.update({date : xp})
-            print(f'Updated {xp} on {date}')
+            print(f'Updated {xp} xp on {date}')
         except AlreadyInDict:
             current_xp = self.tracker_dict[date]
             if not accept_all:
@@ -67,7 +67,7 @@ class pokemonGOtracker:
 
             if replace_xp == 'y':
                 self.tracker_dict[date] = xp
-                print(f'Updated {xp} on {date}')
+                print(f'Updated {xp} xp on {date}')
             else:
                 print('Not updated')
 
@@ -152,9 +152,11 @@ def avg_xp_main(args):
     print(f'Average XP gained between {start_day_key} and {end_day_key}: {avg_daily_xp}')
 
 def handle_date(date):
-    '''Convert date from DD/MM/YY to a datetime.date object if not already in the correct format'''
+    '''Convert date from DD/MM/YYYY to a datetime.date object if not already in the correct format'''
     if not isinstance(date, datetime.date):
         day, month, year = date.split('/')
+        if len(year) != 4:
+            raise ValueError('Year input is not YYYY, likely only YY')
         date = datetime.date(int(year), int(month), int(day))
 
     return date.isoformat()
