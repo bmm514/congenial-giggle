@@ -51,11 +51,22 @@ class pokemonGOtracker:
         finally:
             print('Successfully cleared the file')
 
+    def _check_xp(self, xp, date):
+        '''Check that the input xp is greater than the previous day'''
+        input_date = datetime.date.fromisoformat(date)
+        previous_day = datetime.date.isoformat(input_date - datetime.timedelta(days = 1))
+
+        previous_xp = self.tracker_dict[previous_day]
+
+        if xp < previous_xp:
+            raise ValueError(f'The xp for {date} is lower compared to the previous day; {xp} < {previous_xp}')
+
     def update_xp(self, xp, date, accept_all = False):
         '''Add the XP on a date specified in the format DD/MM/YY'''
         try:
             if date in self.tracker_dict.keys():
                 raise AlreadyInDict
+            self._check_xp(xp, date)
             self.tracker_dict.update({date : xp})
             print(f'Updated {xp} xp on {date}')
         except AlreadyInDict:
@@ -66,6 +77,7 @@ class pokemonGOtracker:
                 replace_xp = 'y'
 
             if replace_xp == 'y':
+                self._check_xp(xp, date)
                 self.tracker_dict[date] = xp
                 print(f'Updated {xp} xp on {date}')
             else:
@@ -122,6 +134,7 @@ class pokemonGOtracker:
     def latest_xp(self):
         _, latest_day = int(self._get_isoday(None, -1))
         return self.tracker_dict[latest_day]
+    
 
 def update_main(args):
     '''Function to run update for argparser'''
