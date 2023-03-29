@@ -54,12 +54,30 @@ class pokemonGOtracker:
     def _check_xp(self, xp, date):
         '''Check that the input xp is greater than the previous day'''
         input_date = datetime.date.fromisoformat(date)
-        previous_day = datetime.date.isoformat(input_date - datetime.timedelta(days = 1))
+        #previous_day = datetime.date.isoformat(input_date - datetime.timedelta(days = 1))
+        keys = list(self.tracker_dict.keys())
+        datetime_keys = [datetime.date.fromisoformat(key) for key in keys]
+        deltas = [datetime_key - input_date for datetime_key in datetime_keys]
+        day_differences = [delta.days for delta in deltas]
+        print(day_differences)
 
-        previous_xp = self.tracker_dict[previous_day]
+        day_difference = 1
+        counter = 0
+        try:
+            while day_difference > 0:
+                counter += 1
+                day_difference = day_differences.pop()
+                previous_day = keys.pop()
+            else:
+                if counter != 1:
+                    previous_day = keys.pop()
+            previous_xp = self.tracker_dict[previous_day]
+            if int(xp) < int(previous_xp):
+                raise ValueError(f'The xp for {date} is lower compared to {previous_day}, the nearest day ({xp} vs {previous_xp})')
+        except IndexError:
+            print('No date before {date} so continuing')
 
-        if xp < previous_xp:
-            raise ValueError(f'The xp for {date} is lower compared to the previous day; {xp} < {previous_xp}')
+
 
     def update_xp(self, xp, date, accept_all = False):
         '''Add the XP on a date specified in the format DD/MM/YY'''
