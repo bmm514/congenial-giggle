@@ -59,7 +59,6 @@ class pokemonGOtracker:
         datetime_keys = [datetime.date.fromisoformat(key) for key in keys]
         deltas = [datetime_key - input_date for datetime_key in datetime_keys]
         day_differences = [delta.days for delta in deltas]
-        print(day_differences)
 
         day_difference = 1
         counter = 0
