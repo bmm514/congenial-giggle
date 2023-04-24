@@ -58,8 +58,9 @@ def main():
         )
 
     pokeGOtracker.execute("""INSERT INTO xp_tracker VALUES ('bmm', '2023-04-23', 10000)""")
+    pokeGOtracker.execute("""INSERT INTO xp_tracker VALUES ('bmm', '2023-04-24', 20000)""")
     print('Added values')
-    rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE name='bmm'""")
+    rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE name='bmm' ORDER BY date DESC""")
     print(rows)
 
 if __name__ == '__main__':
