@@ -4,15 +4,19 @@ import datetime
 
 from collections import OrderedDict
 
+import sqlite3
+
 class AlreadyInDict(Exception):
     '''A key is aleady present in the dictionary'''
 
 class pokemonGOtracker:
+    #open database file
     def __init__(self, tracker_file):
         self.tracker_file = tracker_file
         self.directory = path.split(self.tracker_file)[0]
         self.__initialise_tracker()
 
+    #make a table within the database (if not already present)
     def __initialise_tracker(self):
         if not path.isfile(self.tracker_file):
             if not path.isdir(self.directory):
@@ -30,16 +34,19 @@ class pokemonGOtracker:
                 self._open_json(jsonin)
             print('Successfully opened the file')
 
+    #redundant?
     def _open_json(self, jsonin):
         try:
             self.tracker_dict = OrderedDict(json.load(jsonin))
         except json.decoder.JSONDecodeError:
             self.tracker_dict = OrderedDict()
 
+    #redundant?
     def _save_json(self):
         with open(self.tracker_file, 'w') as jsonout:
             json.dump(self.tracker_dict, jsonout, indent = 2)
 
+    #better way to do this with SQL
     def _clear_tracker(self):
         '''Reset the tracker to an empty OrderedDict'''
         try:
@@ -78,6 +85,7 @@ class pokemonGOtracker:
 
 
 
+    #SQL UPDATE is simple
     def update_xp(self, xp, date, accept_all = False):
         '''Add the XP on a date specified in the format DD/MM/YY'''
         try:
