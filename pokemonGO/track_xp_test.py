@@ -43,6 +43,11 @@ class pokemonGOtracker:
         self.cursor.execute(sql_command, params or ())
         return self.fetchall()
 
+    def update_xp(self, xp, date, accept_all = False):
+        """Add the CP on a date specified in isoformat (YYYY-MM-DD)"""
+        #Use similar code from json example
+        pass
+
 def main():
     database = ':memory:'
 
