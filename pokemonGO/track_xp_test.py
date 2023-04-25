@@ -111,14 +111,12 @@ class pokemonGOtracker:
                 {'username' : self.username, 'date' : date}, fetchall = False)
 
         if previous_record is None:
-            print(f'No date before {date} so continuing...')
             previous_xp = 0
             previous_day = 'n/a'
         else:
             _, previous_day, previous_xp = previous_record
 
         if next_record is None:
-            print(f'No date after {date} so continuing...')
             next_xp = inf
             next_day = 'n/a'
         else:
