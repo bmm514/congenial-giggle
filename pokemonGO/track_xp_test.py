@@ -60,26 +60,25 @@ class pokemonGOtracker:
             return self.fetchone()
 
     def update_xp(self, xp, date, accept_all = False):
-        """Add the CP on a date specified in isoformat (YYYY-MM-DD)"""
-        #self.execute("""INSERT INTO xp_tracker VALUES (:username, :date, :xp)""", 
-        #        {'username' : self.username, 'date' : date, 'xp' : xp})
-        if accept_all:
+        """Add the XP on a date specified in isoformat (YYYY-MM-DD)"""
+        #still need to add in xp_checker, probably use ORDER BY then select top result and compare
+        replace_xp = 'n'
+        if not accept_all:
+            current_xp = self.query("""SELECT xp FROM xp_tracker WHERE date = :date""", 
+                    {'date' : date}, 
+                    fetchall = False)
+
+            if current_xp is not None:
+                replace_xp = input(f'Replace the current xp, {current_xp[0]}, on {date} with {xp}? y/n?') #To terminal
+        else:
+            replace_xp = 'y'
+
+        if replace_xp == 'y':
             self.execute("""REPLACE INTO xp_tracker VALUES (:username, :date, :xp)""", 
                     {'username' : self.username, 'date' : date, 'xp' : xp})
         else:
-            current_xp = self.query("""SELECT xp FROM xp_tracker WHERE date = :date""", {'date' : date}, fetchall = False)
-            if current_xp is not None:
-                current_xp = current_xp[0]
-                replace_xp = input(f'Replace the current xp, {current_xp}, on {date} with {xp}? y/n?')
-            else:
-                replace_xp = 'y'
-
-            if replace_xp == 'y':
-                self.execute("""REPLACE INTO xp_tracker VALUES (:username, :date, :xp)""", 
-                        {'username' : self.username, 'date' : date, 'xp' : xp})
-            else:
-                self.execute("""INSERT OR IGNORE INTO xp_tracker VALUES (:username, :date, :xp)""", 
-                        {'username' : self.username, 'date' : date, 'xp' : xp})
+            self.execute("""INSERT OR IGNORE INTO xp_tracker VALUES (:username, :date, :xp)""", 
+                    {'username' : self.username, 'date' : date, 'xp' : xp})
 
 def main():
     database = ':memory:'
