@@ -1,3 +1,4 @@
+import datetime
 from numpy import inf
 import sqlite3
 
@@ -112,13 +113,11 @@ class pokemonGOtracker:
 
         if previous_record is None:
             previous_xp = 0
-            previous_day = 'n/a'
         else:
             _, previous_day, previous_xp = previous_record
 
         if next_record is None:
             next_xp = inf
-            next_day = 'n/a'
         else:
             _, next_day, next_xp = next_record
 
@@ -126,6 +125,34 @@ class pokemonGOtracker:
             raise ValueError(f'The xp for {date} is lower compared to {previous_day}, the nearest day ({new_xp} vs {previous_xp})')
         if new_xp > next_xp:
             raise ValueError(f'The xp for {date} is higher compared to {next_day}, the nearest day ({new_xp} vs {next_xp})')
+
+    def calculate_avg_daily(self, start_day = None, end_day = None):
+        '''Calcualte the avg daily xp between two dates. start_day and end_day default to newest and oldest dates'''
+        if start_day is None:
+            start_info = self.query("""SELECT xp, date FROM xp_tracker WHERE username = :username ORDER BY date ASC""", 
+                    {'username' : self.username}, fetchall = False)
+        else:
+            start_info = self.query("""SELECT xp, date FROM xp_tracker WHERE 
+                    username = :username AND date = :date""", 
+                    {'username' : self.username, 'date' : start_day}, fetchall = False)
+        if end_day is None:
+            end_info = self.query("""SELECT xp, date FROM xp_tracker WHERE username = :username ORDER BY date DESC""", 
+                    {'username' : self.username}, fetchall = False)
+        else:
+            end_info = self.query("""SELECT xp, date FROM xp_tracker WHERE 
+                    username = :username AND date = :date""", 
+                    {'username' : self.username, 'date' : end_day}, fetchall = False)
+            pass
+
+        start_xp, start_day = start_info
+        end_xp, end_day = end_info
+        xp_delta = end_xp - start_xp
+
+        days_delta = datetime.date.fromisoformat(end_day) - datetime.date.fromisoformat(start_day)
+        days = days_delta.days
+        avg_daily_xp = xp_delta / days
+
+        return avg_daily_xp
 
 def main():
     database = ':memory:'
@@ -146,13 +173,13 @@ def main():
         """
         )
 
-        pokeGOtracker.update_xp(10000, '2023-04-23',accept_all = False)
-        pokeGOtracker.update_xp(20000, '2023-04-24',accept_all = False)
-        pokeGOtracker.update_xp(25000, '2023-04-25',accept_all = False)
-        pokeGOtracker.update_xp(45000, '2023-04-25', accept_all=True)
-        pokeGOtracker.update_xp(50000, '2023-04-24', accept_all=True)
+        pokeGOtracker.update_xp(10000, '2023-04-23')
+        pokeGOtracker.update_xp(20000, '2023-04-24')
+        pokeGOtracker.update_xp(25000, '2023-04-25')
+        pokeGOtracker.update_xp(45000, '2023-04-26', accept_all=True)
         rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
         print(rows)
+        print(pokeGOtracker.calculate_avg_daily())
         #pokeGOtracker._clear_tracker()
 
 if __name__ == '__main__':

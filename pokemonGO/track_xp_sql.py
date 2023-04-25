@@ -47,7 +47,7 @@ class pokemonGOtracker:
             json.dump(self.tracker_dict, jsonout, indent = 2)
 
     #better way to do this with SQL
-    #Done
+    ### Complete
     def _clear_tracker(self):
         '''Reset the tracker to an empty OrderedDict'''
         try:
@@ -119,6 +119,7 @@ class pokemonGOtracker:
         del self.tracker_dict[date]
         self._save_json()
 
+    #Redundant
     def _get_isoday(self, day, loc):
         '''Get the day in datetime format and the dict key associated with it.
         Only day (DD/MM/YYY) or loc are required.'''
@@ -131,6 +132,7 @@ class pokemonGOtracker:
 
         return day, day_key
 
+    #Redundant
     def _xp_delta(self, end_day_key, start_day_key):
         try:
             xp_delta = int(self.tracker_dict[end_day_key]) - int(self.tracker_dict[start_day_key])
@@ -148,6 +150,7 @@ class pokemonGOtracker:
 
         return xp_delta
 
+    ### Complete
     def calculate_avg_daily(self, start_day = None, end_day = None):
         '''Calcualte the avg daily xp between two dates. start_day and end_day default to newest and oldest dates'''
         start_day, start_day_key = self._get_isoday(start_day, 0)
