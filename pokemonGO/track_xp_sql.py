@@ -47,6 +47,7 @@ class pokemonGOtracker:
             json.dump(self.tracker_dict, jsonout, indent = 2)
 
     #better way to do this with SQL
+    #Done
     def _clear_tracker(self):
         '''Reset the tracker to an empty OrderedDict'''
         try:
@@ -58,6 +59,7 @@ class pokemonGOtracker:
         finally:
             print('Successfully cleared the file')
 
+    ### Complete
     def _check_xp(self, xp, date):
         '''Check that the input xp is greater than the previous day'''
         input_date = datetime.date.fromisoformat(date)
@@ -86,6 +88,7 @@ class pokemonGOtracker:
 
 
     #SQL UPDATE is simple
+    ### Complete
     def update_xp(self, xp, date, accept_all = False):
         '''Add the XP on a date specified in the format DD/MM/YY'''
         try:
@@ -109,7 +112,8 @@ class pokemonGOtracker:
                 print('Not updated')
 
         self._save_json()
-        
+    
+    ### Complete
     def delete_record(self, date):
         '''Delete a record from the database'''
         del self.tracker_dict[date]
