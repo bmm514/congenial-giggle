@@ -59,6 +59,22 @@ class pokemonGOtracker:
         else:
             return self.fetchone()
 
+    def delete_record(self, date):
+        '''Delete a record for a specified username and date'''
+        self.execute("""DELETE FROM xp_tracker WHERE date = :date AND username = :username""", 
+                {'date' : date, 'username' : self.username})
+        print('Record deleted')
+
+    def _clear_tracker(self):
+        '''Empty the whole tracker for all users'''
+        self.execute("""DELETE FROM xp_tracker""")
+        print('Tracker cleared')
+
+    def delete_username(self):
+        '''Delete the current username (or chosen username) from the tracker'''
+        self.execute("""DELETE FROM xp_tracker WHERE username = :username""", {'username' : self.username})
+        print('Username deleted')
+
     def update_xp(self, xp, date, accept_all = False):
         """Add the XP on a date specified in isoformat (YYYY-MM-DD)"""
         #still need to add in xp_checker, probably use ORDER BY then select top result and compare
@@ -74,14 +90,25 @@ class pokemonGOtracker:
             replace_xp = 'y'
 
         if replace_xp == 'y':
+            self._check_xp(xp, date)
             self.execute("""REPLACE INTO xp_tracker VALUES (:username, :date, :xp)""", 
                     {'username' : self.username, 'date' : date, 'xp' : xp})
         else:
             self.execute("""INSERT OR IGNORE INTO xp_tracker VALUES (:username, :date, :xp)""", 
                     {'username' : self.username, 'date' : date, 'xp' : xp})
 
-    def delete_record(self, date):
-        self.execute("""DELETE FROM xp_tracker WHERE date = :date""", {'date' : date})
+    def _check_xp(self, new_xp, date, direction = 'lower'):
+        previous_record = self.query("""SELECT * FROM xp_tracker WHERE 
+                username= :username AND date < :date 
+                ORDER BY date DESC""", 
+                {'username' : self.username, 'date' : date}, fetchall = False)
+
+        if previous_record is None:
+            print(f'No date before or after {date} so continuing...')
+        else:
+            _, previous_day, previous_xp = previous_record
+            if new_xp < previous_xp:
+                raise ValueError(f'The xp for {date} is lower compared to {previous_day}, the nearest day ({new_xp} vs {previous_xp})')
 
 def main():
     database = ':memory:'
@@ -91,7 +118,7 @@ def main():
         pokeGOtracker.execute("""
             CREATE TABLE xp_tracker (
                 username text,
-                date text,
+                date DATE,
                 xp INT
             )
             """
@@ -108,9 +135,7 @@ def main():
         pokeGOtracker.update_xp(45000, '2023-04-25', accept_all=True)
         rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
         print(rows)
-        pokeGOtracker.delete_record('2023-04-25')
-        rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
-        print(rows)
+        #pokeGOtracker._clear_tracker()
 
 if __name__ == '__main__':
     main()
