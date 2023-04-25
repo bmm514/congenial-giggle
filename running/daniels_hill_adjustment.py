@@ -21,11 +21,24 @@ def compare_cp_times(checkpoint_info, flat_paces):
 
     return pace_cp_times
 
+def print_times(pace_cp_times):
+    for flat_pace, values in pace_cp_times.items():
+        print(f'#### Flat pace: {flat_pace} #####')
+        for cp, (cp_time, total_time) in values.items():
+            cp_time = str(datetime.timedelta(minutes = cp_time))
+            total_time = str(datetime.timedelta(minutes = total_time))
+            print(f'Check Point {cp}; from last: {cp_time}, total: {total_time}')
+
 
 if __name__ == '__main__':
     checkpoint_info = [(2.3, 166, 13), (4.9, 319, 175), (6.7, 457, 438), (6.7, 331, 473), (9.1, 668, 727), (3.1, 14, 254)]
 
+<<<<<<< Updated upstream
     #pace_cp_times = compare_cp_times(checkpoint_info, [7.5, 8, 8.5, 9, 9.5, 10])
     pace_cp_times = compare_cp_times(checkpoint_info, [10])
     print(pace_cp_times)
     print(compare_cp_times([(3.1, 1000, 0)], [10]))
+=======
+    pace_cp_times = compare_cp_times(checkpoint_info, [7.5, 8, 8.5, 9, 9.5, 10])
+    print_times(pace_cp_times)
+>>>>>>> Stashed changes
