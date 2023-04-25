@@ -62,23 +62,23 @@ class pokemonGOtracker:
 def main():
     database = ':memory:'
 
-    pokeGOtracker = pokemonGOtracker(database, 'bmm')
+    with pokemonGOtracker(database, 'bmm') as pokeGOtracker:
 
-    pokeGOtracker.execute("""
-        CREATE TABLE xp_tracker (
-            name text,
-            date text,
-            xp INT
-        )
-        """
-        )
+        pokeGOtracker.execute("""
+            CREATE TABLE xp_tracker (
+                name text,
+                date text,
+                xp INT
+            )
+            """
+            )
 
-    pokeGOtracker.update_xp(10000, '2023-04-23')
-    pokeGOtracker.update_xp(20000, '2023-04-24')
-    pokeGOtracker.update_xp(25000, '2023-04-25')
-    print('Added values')
-    rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE name='bmm' ORDER BY date DESC""")
-    print(rows)
+        pokeGOtracker.update_xp(10000, '2023-04-23')
+        pokeGOtracker.update_xp(20000, '2023-04-24')
+        pokeGOtracker.update_xp(25000, '2023-04-25')
+        print('Added values')
+        rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE name='bmm' ORDER BY date DESC""")
+        print(rows)
 
 if __name__ == '__main__':
     main()
