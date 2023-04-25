@@ -80,6 +80,9 @@ class pokemonGOtracker:
             self.execute("""INSERT OR IGNORE INTO xp_tracker VALUES (:username, :date, :xp)""", 
                     {'username' : self.username, 'date' : date, 'xp' : xp})
 
+    def delete_record(self, date):
+        self.execute("""DELETE FROM xp_tracker WHERE date = :date""", {'date' : date})
+
 def main():
     database = ':memory:'
 
@@ -103,6 +106,9 @@ def main():
         pokeGOtracker.update_xp(20000, '2023-04-24',accept_all = False)
         pokeGOtracker.update_xp(25000, '2023-04-25',accept_all = False)
         pokeGOtracker.update_xp(45000, '2023-04-25', accept_all=True)
+        rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
+        print(rows)
+        pokeGOtracker.delete_record('2023-04-25')
         rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
         print(rows)
 
