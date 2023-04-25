@@ -49,15 +49,37 @@ class pokemonGOtracker:
     def fetchall(self):
         return self.cursor.fetchall()
 
-    def query(self, sql_command, params = None):
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+    def query(self, sql_command, params = None, fetchall = True):
         self.cursor.execute(sql_command, params or ())
-        return self.fetchall()
+        if fetchall:
+            return self.fetchall()
+        else:
+            return self.fetchone()
 
     def update_xp(self, xp, date, accept_all = False):
         """Add the CP on a date specified in isoformat (YYYY-MM-DD)"""
-        self.execute("""INSERT INTO xp_tracker VALUES (:name, :date, :date)""", 
-                {'database' : self.database, 'name' : self.username, 'date' : date, 'xp' : xp})
-        pass
+        #self.execute("""INSERT INTO xp_tracker VALUES (:username, :date, :xp)""", 
+        #        {'username' : self.username, 'date' : date, 'xp' : xp})
+        if accept_all:
+            self.execute("""REPLACE INTO xp_tracker VALUES (:username, :date, :xp)""", 
+                    {'username' : self.username, 'date' : date, 'xp' : xp})
+        else:
+            current_xp = self.query("""SELECT xp FROM xp_tracker WHERE date = :date""", {'date' : date}, fetchall = False)
+            if current_xp is not None:
+                current_xp = current_xp[0]
+                replace_xp = input(f'Replace the current xp, {current_xp}, on {date} with {xp}? y/n?')
+            else:
+                replace_xp = 'y'
+
+            if replace_xp == 'y':
+                self.execute("""REPLACE INTO xp_tracker VALUES (:username, :date, :xp)""", 
+                        {'username' : self.username, 'date' : date, 'xp' : xp})
+            else:
+                self.execute("""INSERT OR IGNORE INTO xp_tracker VALUES (:username, :date, :xp)""", 
+                        {'username' : self.username, 'date' : date, 'xp' : xp})
 
 def main():
     database = ':memory:'
@@ -66,18 +88,23 @@ def main():
 
         pokeGOtracker.execute("""
             CREATE TABLE xp_tracker (
-                name text,
+                username text,
                 date text,
                 xp INT
             )
             """
             )
 
-        pokeGOtracker.update_xp(10000, '2023-04-23')
-        pokeGOtracker.update_xp(20000, '2023-04-24')
-        pokeGOtracker.update_xp(25000, '2023-04-25')
-        print('Added values')
-        rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE name='bmm' ORDER BY date DESC""")
+        pokeGOtracker.execute("""
+        CREATE UNIQUE INDEX xp_tracker_unique_username_date ON xp_tracker (username, date)
+        """
+        )
+
+        pokeGOtracker.update_xp(10000, '2023-04-23',accept_all = False)
+        pokeGOtracker.update_xp(20000, '2023-04-24',accept_all = False)
+        pokeGOtracker.update_xp(25000, '2023-04-25',accept_all = False)
+        pokeGOtracker.update_xp(45000, '2023-04-25', accept_all=True)
+        rows = pokeGOtracker.query("""SELECT * FROM xp_tracker WHERE username='bmm' ORDER BY date DESC""")
         print(rows)
 
 if __name__ == '__main__':
