@@ -16,7 +16,7 @@ def compare_cp_times(checkpoint_info, flat_paces):
     for flat_pace in flat_paces:
         total_time = 0
         for x, (miles, uphill, downhill) in enumerate(checkpoint_info):
-            cp_time = calc_time(miles, uphill + 500/6, downhill + 500 / 6, flat_pace)
+            cp_time = calc_time(miles, uphill, downhill, flat_pace)
             total_time += cp_time
             pace_cp_times[flat_pace][f'CP{x+1}'] = (cp_time, total_time)
 
