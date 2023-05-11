@@ -56,9 +56,14 @@ def write_to_csv(pace_cp_times, cp_fileout, total_fileout):
 
 
 if __name__ == '__main__':
-    checkpoint_info = [(4.9+2.3, 319+166, 175+13), (6.7, 457, 438), (6.7, 331, 473), (9.1, 668, 727), (3.1, 14, 254)]
+#    checkpoint_info = [(4.9+2.3, 319+166, 175+13), (6.7, 457, 438), (6.7, 331, 473), (9.1, 668, 727), (3.1, 14, 254)]
+#
+#
+#    pace_cp_times = compare_cp_times(checkpoint_info, [8.5, 9, 9.5, 10, 10.5, 11])
+#    print_times(pace_cp_times)
+#    write_to_csv(pace_cp_times, 'tecBB_cp_times.csv', 'tecBB_total_times.csv')
 
-
+    checkpoint_info = [(5, 193, 98), (5, 80, 197), (5, 182, 155), (5, 15, 85), (5,25,47), (5, 73, 85), (5, 39, 48), (4.45, 144, 5)]
     pace_cp_times = compare_cp_times(checkpoint_info, [8.5, 9, 9.5, 10, 10.5, 11])
     print_times(pace_cp_times)
-    write_to_csv(pace_cp_times, 'tecBB_cp_times.csv', 'tecBB_total_times.csv')
+
