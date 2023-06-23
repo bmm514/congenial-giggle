@@ -37,7 +37,7 @@ def main():
         ])
 
     point_order = [2,3,4,5,6]
-    iterations = 1000000
+    iterations = 10000000
 
     predicted_total_distance = 0
     min_max = [numpy.inf, 0]
