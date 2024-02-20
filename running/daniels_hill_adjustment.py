@@ -25,4 +25,18 @@ if __name__ == '__main__':
     checkpoint_info = [(2.3, 166, 13), (4.9, 319, 175), (6.7, 457, 438), (6.7, 331, 473), (9.1, 668, 727), (3.1, 14, 254)]
 
     pace_cp_times = compare_cp_times(checkpoint_info, [7.5, 8, 8.5, 9, 9.5, 10])
+    
+    checkpoint_info = [(6.17, 108, 219), (5.17, 279, 272), (7.48, 461, 468), (8.57, 434, 298), (3.85, 108, 302), (2.74, 124, 46)]
+    for x, (distance, uphill, downhill) in enumerate(checkpoint_info):
+        new_uphill = uphill * 2140/1514
+        new_downhill = downhill * 2140/1514
+        checkpoint_info[x] = (distance, new_uphill, new_downhill)
+    
+    print(checkpoint_info)
+    pace_cp_times = compare_cp_times(checkpoint_info, [8, 8.5, 9, 9.5, 10])
     print(pace_cp_times)
+    for pace, values in pace_cp_times.items():
+        print(f'Pace: {pace} min/mi:')
+        for checkpoint, (cp_time, total_time) in values.items():
+            print(f'\tCheckpoint ({checkpoint}):')
+            print(f'\t\tDelta = {cp_time}, Total = {total_time}')
