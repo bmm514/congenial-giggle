@@ -1,4 +1,5 @@
 from collections import defaultdict
+import datetime
 
 def calc_time(miles, uphill, downhill, flat_pace, uphill_def_sec = 15, downhill_gain_sec = 8):
     avg_up_grad = uphill / (miles * 1.601 * 10)
@@ -7,8 +8,11 @@ def calc_time(miles, uphill, downhill, flat_pace, uphill_def_sec = 15, downhill_
     time_removed = avg_down_grad * miles * (downhill_gain_sec / 60)
     time_delta = time_added - time_removed
     base_time = miles * flat_pace
-    return base_time + time_delta
+    section_time = base_time + time_delta
+    return section_time
 
+def calculate_distance_fade(section_time, section_start_distance, section_distance):
+    pass
 def compare_cp_times(checkpoint_info, flat_paces):
     pace_cp_times = defaultdict(lambda : {})
     for flat_pace in flat_paces:
@@ -20,6 +24,9 @@ def compare_cp_times(checkpoint_info, flat_paces):
 
     return pace_cp_times
 
+def convert_mins_to_hr_min_sec(minutes):
+    converted_time = datetime.timedelta(minutes = minutes)
+    return str(converted_time)
 
 if __name__ == '__main__':
     checkpoint_info = [(2.3, 166, 13), (4.9, 319, 175), (6.7, 457, 438), (6.7, 331, 473), (9.1, 668, 727), (3.1, 14, 254)]
@@ -38,5 +45,7 @@ if __name__ == '__main__':
     for pace, values in pace_cp_times.items():
         print(f'Pace: {pace} min/mi:')
         for checkpoint, (cp_time, total_time) in values.items():
+            converted_cp_time = convert_mins_to_hr_min_sec(cp_time)
+            converted_total_time = convert_mins_to_hr_min_sec(total_time)
             print(f'\tCheckpoint ({checkpoint}):')
-            print(f'\t\tDelta = {cp_time}, Total = {total_time}')
+            print(f'\t\tDelta = {converted_cp_time}, Total = {converted_total_time}')
